@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Annotation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- https://3dvar.com/v/56_1_audio.mp4 -->
+        <label for="videoUrl">Enter video URL:</label>
+        <input type="text" id="videoUrl" name="videoUrl" onchange="loadVideo()" placeholder="https://example.com/video.mp4">
+
+        <div class="video-container">
+            <video id="videoPlayer" controls></video>
+        </div>
+
+        <div class="annotations">
+            <div class="annotation-label" style="color: #5DA5DA;">Vision / Eye Impairment</div>
+            <div id="vision" class="annotation-line"></div>
+            <div class="annotation-label" style="color: #FAA43A;">Hearing Impairment</div>
+            <div id="hearing" class="annotation-line"></div>
+            <div class="annotation-label" style="color: #60BD68;">Vocal system Impairment</div>
+            <div id="vocal" class="annotation-line"></div>
+            <div class="annotation-label" style="color: #F17CB0;">Hands / Fingers / Touch Impairment</div>
+            <div id="hands" class="annotation-line"></div>
+        </div>
+
+        <form id="annotationForm">
+            <label for="channel">Channel:</label>
+            <select id="channel">
+                <option value="vision">Vision / Eye</option>
+                <option value="hearing">Hearing</option>
+                <option value="vocal">Vocal system</option>
+                <option value="hands">Hands / Fingers / Touch</option>
+            </select>
+
+            <label for="startTime">Start Time:</label>
+            <input type="number" id="startTime" step="0.1"> 
+            <button type="button" onclick="setStartTime()">Set</button>
+
+            <label for="endTime">End Time:</label>
+            <input type="number" id="endTime" step="0.1">
+            <button type="button" onclick="setEndTime()">Set</button>
+
+            <label for="effort">Effort Level:</label>
+            <select id="effort">                <option value="1">1 - Very Low</option>
+                <option value="2">2 - Low</option>
+                <option value="3">3 - Moderate</option>
+                <option value="4">4 - High</option>
+                <option value="5">5 - Very High</option>
+            </select>
+
+            <button type="button" onclick="submitAnnotation()">Submit</button>
+        </form>
+
+        <button onclick="exportCSV()">Export CSV</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

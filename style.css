@@ -1,0 +1,76 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#videoUrl{
+    width: 30%;
+    margin: 5px;
+}
+
+.video-container {
+    width: 100%;
+    max-width: 800px;
+}
+
+video {
+    width: 100%;
+    height: auto;
+    margin: 5px
+}
+
+.annotations {
+    display: block;
+    margin-bottom: 20px;
+}
+
+.annotation-line {
+    height: 10px;
+    background-color: lightgrey;
+    margin: 5px;
+}
+
+.annotation-label{
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.segment {
+    height: 10px;
+    display: flex;
+}
+
+form {
+    justify-content: space-between;
+    align-items: left;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 1rem;
+}
+
+#annotationForm input {
+    margin: 5px;
+    width: 40px;
+}
+
+#annotationForm select {
+    margin: 5px;
+    width: 60px;
+}
+
+#annotationForm label,  button {
+    margin: 5px;
+}
+
+@media (max-width: 600px) {
+    form {
+        flex-wrap: wrap;
+    }
+}
