@@ -22,6 +22,22 @@ for (let i = 0; i < annotationLines.length; i++) {
     annotationLines[i].addEventListener("mousedown", function() {
         startAnnotation(event, this);
     });
+
+    // hover over annotation line to show time
+    // and navigate to that time
+    annotationLines[i].addEventListener("mousemove", function() {
+        const videoPlayer = document.getElementById("videoPlayer");
+        const duration = videoPlayer.duration;
+        const clickPosition = event.clientX - this.offsetLeft;
+        const clickPercentage = clickPosition / this.offsetWidth;
+        const curTime = duration * clickPercentage;
+        videoPlayer.currentTime = curTime;
+        const time = document.getElementById("time");
+        time.style.display = "block";
+        time.style.left = `${event.clientX}px`;
+        time.style.top = `${event.clientY}px`;
+        time.innerHTML = `${curTime.toFixed(2)}s`;
+    });
 }
 
 function startAnnotation(e, annotationLine) {
