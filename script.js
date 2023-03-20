@@ -6,6 +6,9 @@ for (let i = 0; i < annotationLines.length; i++) {
 }
 
 let annotations = [];
+let curAnnotation = null;
+let curAnnotationLine = null;
+let needToSubmit = false;
 
 function loadVideo() {
     const video = document.getElementById("videoPlayer");
@@ -14,33 +17,73 @@ function loadVideo() {
     video.load();
   }
 
-function setStartTime() {
-    const videoPlayer = document.getElementById("videoPlayer");
-    const startTime = document.getElementById("startTime");
-    startTime.value = videoPlayer.currentTime.toFixed(2);
+
+for (let i = 0; i < annotationLines.length; i++) {
+    annotationLines[i].addEventListener("mousedown", function() {
+        startAnnotation(event, this);
+    });
 }
 
-function setEndTime() {
+function startAnnotation(e, annotationLine) {
+    if (needToSubmit) {
+        alert("Please submit your current annotation");
+        return;
+    }
+    curAnnotationLine = annotationLine;
+    const channel = annotationLine.id;
     const videoPlayer = document.getElementById("videoPlayer");
-    const endTime = document.getElementById("endTime");
-    endTime.value = videoPlayer.currentTime.toFixed(2);
-}
-
-function submitAnnotation() {
-    const channel = document.getElementById("channel").value;
-    const startTime = parseFloat(document.getElementById("startTime").value);
-    const endTime = parseFloat(document.getElementById("endTime").value);
-    const effort = parseInt(document.getElementById("effort").value);
-
-    const annotation = {
+    const duration = videoPlayer.duration;
+    const clickPosition = e.clientX - annotationLine.offsetLeft;
+    const clickPercentage = clickPosition / annotationLine.offsetWidth;
+    const startTime = duration * clickPercentage;
+    console.log("start time: " + startTime);
+    curAnnotation = {
         channel,
         startTime,
-        endTime,
-        effort
+        endTime: null,
+        effort: null,
+        comment: null,
     };
+    annotationLine.addEventListener('mousemove', resizeAnnotation);
+    annotationLine.addEventListener('mouseup', endAnnotation);
+}
 
-    annotations.push(annotation);
+function resizeAnnotation(e) {
+    const videoPlayer = document.getElementById("videoPlayer");
+    const duration = videoPlayer.duration;
+    const clickPosition = e.clientX - curAnnotationLine.offsetLeft;
+    const clickPercentage = clickPosition / curAnnotationLine.offsetWidth;
+    const curTime = duration * clickPercentage;
+    console.log("cur time: " + curTime);
 
+}
+
+function endAnnotation(e) {
+    const videoPlayer = document.getElementById("videoPlayer");
+    const duration = videoPlayer.duration;
+    const clickPosition = e.clientX - curAnnotationLine.offsetLeft;
+    const clickPercentage = clickPosition / curAnnotationLine.offsetWidth;
+    const endTime = duration * clickPercentage;
+    console.log("end time: " + endTime);
+    curAnnotation.endTime = endTime;
+    curAnnotationLine.removeEventListener('mousemove', resizeAnnotation);
+    curAnnotationLine.removeEventListener('mouseup', endAnnotation);
+    
+    colorAnnotation(curAnnotation.startTime, curAnnotation.endTime, curAnnotation.channel);
+
+    needToSubmit = true;
+
+    showAnnotationForm();
+}
+
+function showAnnotationForm() {
+    const annotationForm = document.getElementById('annotationForm');
+    annotationForm.style.display = 'block';
+}
+
+
+
+function colorAnnotation(startTime, endTime, channel){
     const annotationLine = document.getElementById(channel);
     const videoPlayer = document.getElementById("videoPlayer");
     const duration = videoPlayer.duration;
@@ -56,7 +99,6 @@ function submitAnnotation() {
     segment.style.left = `${annotationLine.offsetLeft + (videoPlayer.offsetWidth * (startPercentage / 100))}px`;
     // set width to the width of the video times the percentage of the start and end time
     segment.style.width = `${videoPlayer.offsetWidth * ((endPercentage - startPercentage) / 100)}px`;
-    segment.style.height = "10px";
 
     // select an aesthetic color palette of 4, and set the color based on the channel
     const colors = [
@@ -76,11 +118,41 @@ function submitAnnotation() {
     }
 
     annotationLine.appendChild(segment);
+
+    // right click to remove annotation
+    segment.addEventListener("contextmenu", function() {
+        annotationLine.removeChild(segment);
+        // remove annotation from annotations array
+        annotations = annotations.filter(annotation => {
+            return annotation.startTime !== startTime && annotation.endTime !== endTime;
+        });  
+    });
+}
+
+
+function submitAnnotation() {
+    // get comment
+    const comment = document.getElementById("comment").value;
+    curAnnotation.comment = comment;
+    // get effort
+    const effort = document.getElementById("effort").value;
+    curAnnotation.effort = effort;
+
+    annotations.push(curAnnotation);
+    console.log(curAnnotation);
+    curAnnotation = null;
+    needToSubmit = false;
+    const annotationForm = document.getElementById('annotationForm');
+    // clear comment box
+    document.getElementById("comment").value = "";
+    // reset effort selector
+    document.getElementById("effort").selectedIndex = 0;
+    annotationForm.style.display = 'none';
 }
 
 function exportCSV() {
-    const csvContent = "data:text/csv;charset=utf-8," + "channel,start_time,end_time,effort\n" + annotations.map(annotation => {
-        return `${annotation.channel},${annotation.startTime},${annotation.endTime},${annotation.effort}`;
+    const csvContent = "data:text/csv;charset=utf-8," + "channel,start_time,end_time,effort,comment\n" + annotations.map(annotation => {
+        return `${annotation.channel},${annotation.startTime},${annotation.endTime},${annotation.effort},${annotation.comment}`;
     }).join("\n");
 
     const encodedUri = encodeURI(csvContent);

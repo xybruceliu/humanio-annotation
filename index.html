@@ -10,7 +10,8 @@
     <div class="container">
         <!-- https://3dvar.com/v/56_1_audio.mp4 -->
         <label for="videoUrl">Enter video URL:</label>
-        <input type="text" id="videoUrl" name="videoUrl" onchange="loadVideo()" placeholder="https://example.com/video.mp4">
+        <input type="text" id="videoUrl" name="videoUrl" onchange="loadVideo()" placeholder="https://3dvar.com/e/*.mp4">
+        <button onclick="loadVideo()">Load Video</button>
 
         <div class="video-container">
             <video id="videoPlayer" controls></video>
@@ -28,29 +29,16 @@
         </div>
 
         <form id="annotationForm">
-            <label for="channel">Channel:</label>
-            <select id="channel">
-                <option value="vision">Vision / Eye</option>
-                <option value="hearing">Hearing</option>
-                <option value="vocal">Vocal system</option>
-                <option value="hands">Hands / Fingers / Touch</option>
-            </select>
-
-            <label for="startTime">Start Time:</label>
-            <input type="number" id="startTime" step="0.1"> 
-            <button type="button" onclick="setStartTime()">Set</button>
-
-            <label for="endTime">End Time:</label>
-            <input type="number" id="endTime" step="0.1">
-            <button type="button" onclick="setEndTime()">Set</button>
-
             <label for="effort">Effort Level:</label>
-            <select id="effort">                <option value="1">1 - Very Low</option>
-                <option value="2">2 - Low</option>
-                <option value="3">3 - Moderate</option>
-                <option value="4">4 - High</option>
-                <option value="5">5 - Very High</option>
+            <select id="effort">                
+                <option value="1">1 - Low: Takes minimum or no effort to stop the task / resume to the task</option>
+                <option value="2">2 - Moderate: Takes some effort to stop the task / resume to the task</option>
+                <option value="3">3 - High: Takes very high effort to stop the task / resume to the task</option>
             </select>
+
+            <label for="comment">Comment:</label>
+            <textarea id="comment" rows="2" cols="50"></textarea>
+            
 
             <button type="button" onclick="submitAnnotation()">Submit</button>
         </form>

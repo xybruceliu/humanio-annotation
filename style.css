@@ -32,7 +32,7 @@ video {
 }
 
 .annotation-line {
-    height: 10px;
+    height: 20px;
     background-color: lightgrey;
     margin: 5px;
 }
@@ -43,7 +43,7 @@ video {
 }
 
 .segment {
-    height: 10px;
+    height: 20px;
     display: flex;
 }
 
@@ -53,6 +53,10 @@ form {
     width: 100%;
     max-width: 800px;
     margin-bottom: 1rem;
+}
+
+#annotationForm {
+    display: none;
 }
 
 #annotationForm input {
